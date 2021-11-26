@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<head>
+    <title padlock blockchain></title>
+</head>
+
+<body>
+    <p id="new_user"><b>Create a new user</b></p>
+
+    <label for="name">User name</label><br>
+    <input type="text" id="name" name="name"><br>
+
+    <button onclick="newUser()">Create user</button><br>
+
+    <p id="user_message"></p>
+
+
+    <p id="new_transaction"><b>Create a new transaction</b></p>
+
+    <label for="sender">Sender:</label><br>
+    <input type="text" id="sender" name="sender"><br>
+
+    <label for="recipient">Recipient:</label><br>
+    <input type="text" id="recipient" name="recipient"><br>
+
+    <label for="amount">Amount:</label><br>
+    <input type="number" id="amount" name="amount"><br>
+
+    <button onclick="newTransaction()">Send new transaction</button><br>
+
+    <p id="transaction_message"></p>
+
+
+    <p id="new_offer"><b>Create a new offer</b></p>
+
+    <label for="owner">Owner:</label><br>
+    <input type="text" id="owner" name="owner"><br>
+
+    <label for="max_duration">Max duration:</label><br>
+    <input type="number" id="max_duration" name="max_duration"><br>
+
+    <label for="caution">Caution:</label><br>
+    <input type="number" id="caution" name="caution"><br>
+
+    <label for="price">Price:</label><br>
+    <input type="number" id="price" name="price"><br>
+
+    <label for="padlock_id">Padlock:</label><br>
+    <input type="text" id="padlock_id" name="padlock_id"><br>
+
+    <button onclick="newOffer()">Send new offer</button><br>
+    <p id="offer_message"></p>
+
+
+    <p id="new_contract"><b>Create a new contract</b></p>
+
+    <label for="offer_block">Offer block:</label><br>
+    <input type="number" id="offer_block" name="offer_block"><br>
+
+    <label for="offer_index">Offer index:</label><br>
+    <input type="number" id="offer_index" name="offer_index"><br>
+
+    <label for="user">User:</label><br>
+    <input type="text" id="user" name="user"><br>
+
+    <button onclick="newContract()">Send new contract</button><br>
+    <p id="contract_message"></p>
+
+
+    <p id="end_contract"><b>End a contract</b></p>
+
+    <label for="contract_block">Contract block:</label><br>
+    <input type="number" id="contract_block" name="contract_block"><br>
+
+    <label for="contract_index">Contract index:</label><br>
+    <input type="number" id="contract_index" name="contract_index"><br>
+
+    <label for="duration">Duration:</label><br>
+    <input type="number" id="duration" name="duration"><br>
+
+    <button onclick="endContract()">End contract</button><br>
+    <p id="end_message"></p>
+
+    <p id="fake_keys"><b>Fake keys</b></p>
+    <button onclick="fakeKeys()">Fake keys</button><br>
+    <p id="fake_message"></p>
+
+
+    <p id="mine"><b>Mine</b></p>
+
+    <button onclick="refreshChain()">Refresh chain</button>
+
+    <button onclick="Mine()">Mine</button>
+
+    <p id="mine_message"></p>
+
+    <p id="chain"><b>Chain:</b></p>
+
+
+    <script>
+        function refreshChain() {
+            fetch('http://localhost:5000/chain')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    var chain = document.getElementById("chain");
+                    chain.innerHTML = '<b>Chain:</b>' + JSON.stringify(data);
+                });
+        }
+
+        function Mine() {
+            fetch('http://localhost:5000/mine')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    var mine_message = document.getElementById("mine_message");
+                    mine_message.innerHTML = JSON.stringify(data);
+                });
+            refreshChain();
+        }
+
+        function newUser() {
+            var name = document.getElementById('name').value;
+            fetch('http://localhost:5000/user/new', {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify({ 'name': name })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    var user_message = document.getElementById("user_message");
+                    user_message.innerHTML = JSON.stringify(data);
+                });
+        }
+
+        function newTransaction() {
+            var sender = document.getElementById('sender').value;
+            var recipient = document.getElementById('recipient').value;
+            var amount = document.getElementById('amount').value;
+            fetch('http://localhost:5000/transactions/new', {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify({ 'sender': sender, 'recipient': recipient, 'amount': amount })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    var transaction_message = document.getElementById("transaction_message");
+                    transaction_message.innerHTML = JSON.stringify(data);
+                });
+        }
+
+        function newOffer() {
+            var owner = document.getElementById('owner').value;
+            var max_duration = document.getElementById('max_duration').value;
+            var caution = document.getElementById('caution').value;
+            var price = document.getElementById('price').value;
+            var padlock_id = document.getElementById('padlock_id').value;
+            fetch('http://localhost:5000/offer/new', {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify({ 'owner': owner, 'max_duration': max_duration, 'caution': caution, 'price': price, 'padlock_id': padlock_id })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    var offer_message = document.getElementById("offer_message");
+                    offer_message.innerHTML = JSON.stringify(data);
+                });
+        }
+
+        function newContract() {
+            var offer_block = document.getElementById('offer_block').value;
+            var offer_index = document.getElementById('offer_index').value;
+            var user = document.getElementById('user').value;
+            fetch('http://localhost:5000/contract/new', {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify({ 'offer_block': offer_block, 'offer_index': offer_index, 'user': user })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    var conctract_message = document.getElementById("contract_message");
+                    contract_message.innerHTML = JSON.stringify(data);
+                });
+        }
+
+        function endContract() {
+            var contract_block = document.getElementById('contract_block').value;
+            var contract_index = document.getElementById('contract_index').value;
+            var duration = document.getElementById('duration').value;
+            fetch('http://localhost:5000/end_contract', {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify({ 'contract_block': contract_block, 'contract_index': contract_index, 'duration': duration })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    var end_message = document.getElementById("end_message");
+                    end_message.innerHTML = JSON.stringify(data);
+                });
+        }
+
+        function fakeKeys() {
+            fetch('http://localhost:5000/set_fake')
+                .then(response => response.json())
+                .then(data => {
+                    var fake_message = document.getElementById("fake_message");
+                    fake_message.innerHTML = JSON.stringify(data);
+                });
+        }
+
+
+    </script>
+</body>
